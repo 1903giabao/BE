@@ -32,10 +32,14 @@ public class UserResource {
 
     @PostMapping("/register")
     public ResponseEntity<?> createUser(@RequestBody User user){
-        if(userService.save(user)){
-            return ResponseEntity.status(HttpStatus.OK).body(true);
+        if(userService.isUserNameDupplicated(user.getUserName()) || userService.isEmailDupplicated(user.getEmail())) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username or Email is dupplicated.");
+        } else {
+            if (userService.save(user)) {
+                return ResponseEntity.status(HttpStatus.OK).body(true);
+            }
         }
-        return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body("Create User Failed !");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Create User Failed !");
     }
 
 }
